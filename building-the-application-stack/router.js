@@ -1,6 +1,6 @@
 "use strict";
 
-function route(pathname) {
+function route(pathname, handle) {
     console.log(`About to route a request for ${pathname}...`);
 
     if (typeof handle[pathname] === 'function')
