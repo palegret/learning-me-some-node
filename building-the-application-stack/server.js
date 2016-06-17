@@ -8,7 +8,7 @@ const PORT = 8888;
 let http = require("http");
 let url = require("url");
 
-function start(route) {
+function start(route, handle) {
     let requestListener = (request, response) => {
         let parsedUrl = url.parse(request.url);
         let pathname = parsedUrl ? parsedUrl.pathname : "";
@@ -16,7 +16,7 @@ function start(route) {
 
         if (!isFavicon) {
             console.log(`Request for ${pathname} received.`);
-            route(pathname);
+            route(pathname, handle);
         }
 
         const headers = {
