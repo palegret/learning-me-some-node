@@ -10,13 +10,14 @@ let url = require("url");
 
 function start(route) {
     let requestListener = (request, response) => {
-        console.log("Request received.");
-
         let parsedUrl = url.parse(request.url);
         let pathname = parsedUrl ? parsedUrl.pathname : "";
-        
-        console.log(`Request for ${pathname} received.`);
-        route(pathname);
+        let isFavicon = (/favicon\.ico\b/i).test(pathname);
+
+        if (!isFavicon) {
+            console.log(`Request for ${pathname} received.`);
+            route(pathname);
+        }
 
         const headers = {
             "Content-Type": "text/plain"
