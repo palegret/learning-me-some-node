@@ -6,20 +6,25 @@
 const PORT = 8888;
 
 let http = require("http");
-let requestListener = (request, response) => {
-    console.log("Request received.");
 
-    const headers = {
-        "Content-Type": "text/plain"
+function start() {
+    let requestListener = (request, response) => {
+        console.log("Request received.");
+
+        const headers = {
+            "Content-Type": "text/plain"
+        };
+
+        response.writeHead(200, "Saul Goodman", headers);
+        response.write("Hello World");
+        response.end();
     };
 
-    response.writeHead(200, "Saul Goodman", headers);
-    response.write("Hello World");
-    response.end();
-};
+    http.createServer(requestListener).listen(PORT);
+    console.log(`Server has started on port ${PORT}.`);
+}
 
-http.createServer(requestListener).listen(PORT);
-console.log(`Server has started on port ${PORT}.`);
+exports.start = start;
 
 // More info:
 // http://debuggable.com/posts/understanding-node-js:4bd98440-45e4-4a9a-8ef7-0f7ecbdd56cb
