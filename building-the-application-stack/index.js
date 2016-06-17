@@ -5,9 +5,9 @@ let router = require("./router");
 let requestHandlers = require("./requestHandlers");
 
 let handle = {
-    "/": requestHandlers.start;
-    "/start": requestHandlers.start;
-    "/upload": requestHandlers.upload;
+    "/": requestHandlers.start,
+    "/start": requestHandlers.start,
+    "/upload": requestHandlers.upload
 };
 
 server.start(router.route, handle);
