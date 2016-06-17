@@ -8,18 +8,19 @@ const PORT = 8888;
 let http = require("http");
 let url = require("url");
 
-function start() {
+function start(route) {
     let requestListener = (request, response) => {
         console.log("Request received.");
+
+        let parsedUrl = url.parse(request.url);
+        let pathname = parsedUrl ? parsedUrl.pathname : "";
+        
+        console.log(`Request for ${pathname} received.`);
+        route(pathname);
 
         const headers = {
             "Content-Type": "text/plain"
         };
-
-        let parsedUrl = url.parse(request.url);
-        let pathname = parsedUrl ? parsedUrl.pathname : "";
-
-        console.log(`Request for ${pathname} received.`);
 
         response.writeHead(200, "Saul Goodman", headers);
         response.write("Hello World");
