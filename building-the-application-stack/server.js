@@ -14,18 +14,13 @@ function start(route, handle) {
         let pathname = parsedUrl ? parsedUrl.pathname : "";
         let isFavicon = (/favicon\.ico\b/i).test(pathname);
 
-        if (!isFavicon) {
-            console.log(`Request for ${pathname} received.`);
-            route(pathname, handle);
-        }
+        if (isFavicon)
+            return;
 
-        const headers = {
-            "Content-Type": "text/plain"
-        };
+        let content = "";
 
-        response.writeHead(200, "Saul Goodman", headers);
-        response.write("Hello World");
-        response.end();
+        console.log(`Request for ${pathname} received.`);
+        route(pathname, response, handle);
     };
 
     http.createServer(requestListener).listen(PORT);
