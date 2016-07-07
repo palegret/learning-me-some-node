@@ -1,8 +1,9 @@
 "use strict";
 
-const HTTP_OK_DESC = "Saul Goodman";
-
 let exec = require("child_process").exec;
+let querystring = require("querystring");
+
+const HTTP_OK_DESC = "Saul Goodman";
 
 function startWithBlocking() {
     // "[I]nstead of trying to explain what "blocking" and "non-blocking"
@@ -78,16 +79,6 @@ function writePlainTextResponse(response, stdout) {
     response.end();
 }
 
-function writeHtmlResponse(response, stdout) {
-    const headers = {
-        "Content-Type": "text/html"
-    };
-
-    response.writeHead(200, HTTP_OK_DESC, headers);
-    response.write(stdout);
-    response.end();
-}
-
 function startPlainText(response) {
     // "...[O]ur application...[used] to transport the content (which the
     // request handlers would like to display to the user) from the request
@@ -108,7 +99,17 @@ function startPlainText(response) {
     });
 }
 
-function start(response) {
+function writeHtmlResponse(response, body) {
+    const headers = {
+        "Content-Type": "text/html"
+    };
+
+    response.writeHead(200, HTTP_OK_DESC, headers);
+    response.write(body);
+    response.end();
+}
+
+function start(response, postData) {
     console.log("Request handler 'start' was called.");
 
     var body = `
@@ -120,18 +121,23 @@ function start(response) {
             </head>
             <body>
                 <form action="/upload" method="post">
-                    <textarea name="text" rows="20" cols="60"></textarea>
+                    <div>
+                        <textarea name="text" rows="20" cols="60"></textarea>
+                    </div>
                     <input type="submit" value="Submit text" />
                 </form>
             </body>
         </html>`;
 
-    writeHtmlResponse(response, stdout);
+    writeHtmlResponse(response, body);
 }
 
-function upload(response) {
+function upload(response, postData) {
     console.log("Request handler 'upload' was called.");
-    writePlainTextResponse(response, "Hello Upload");
+
+    let text = postData ? querystring.parse(postData).text : "";
+    let message = `You've sent the text: '${text}'.`;
+    writePlainTextResponse(response, message);
 }
 
 exports.start = start;

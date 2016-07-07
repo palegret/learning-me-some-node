@@ -1,6 +1,6 @@
-// Need strict mode for ES6:
-// "SyntaxError: Block-scoped declarations (let, const, function, class) not
-// yet supported outside strict mode"
+// Need strict mode for ES6: "SyntaxError: Block-scoped declarations (let,
+// const, function, class) not yet supported outside strict mode"
+
 "use strict";
 
 const PORT = 8888;
@@ -8,7 +8,12 @@ const PORT = 8888;
 let http = require("http");
 let url = require("url");
 
-function start(route, handle) {
+function startListening(listener) {
+    http.createServer(listener).listen(PORT);
+    console.log(`Server has started on port ${PORT}.`);
+}
+
+function startOriginal(route, handle) {
     let requestListener = (request, response) => {
         let parsedUrl = url.parse(request.url);
         let pathname = parsedUrl ? parsedUrl.pathname : "";
@@ -23,8 +28,30 @@ function start(route, handle) {
         route(pathname, response, handle);
     };
 
-    http.createServer(requestListener).listen(PORT);
-    console.log(`Server has started on port ${PORT}.`);
+    startListening(requestListener);
+}
+
+function start(route, handle) {
+    let requestListener = (request, response) => {
+        let postData = "";
+        let parsedUrl = url.parse(request.url);
+        let pathname = parsedUrl ? parsedUrl.pathname : "";
+
+        console.log(`Request for ${pathname} received.`);
+
+        request.setEncoding("utf8");
+
+        request.addListener("data", (postDataChunk) => {
+            postData += postDataChunk;
+            console.log(`Received POST data chunk '${postDataChunk}'.`);
+        });
+
+        request.addListener("end", () => {
+            route(pathname, response, handle, postData);
+        });
+    };
+
+    startListening(requestListener);
 }
 
 exports.start = start;
