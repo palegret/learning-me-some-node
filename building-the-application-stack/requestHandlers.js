@@ -1,5 +1,7 @@
 "use strict";
 
+const HTTP_OK_DESC = "Saul Goodman";
+
 let exec = require("child_process").exec;
 
 function startWithBlocking() {
@@ -71,12 +73,22 @@ function writePlainTextResponse(response, stdout) {
         "Content-Type": "text/plain"
     };
 
-    response.writeHead(200, "Saul Goodman", headers);
+    response.writeHead(200, HTTP_OK_DESC, headers);
     response.write(stdout);
     response.end();
 }
 
-function start(response) {
+function writeHtmlResponse(response, stdout) {
+    const headers = {
+        "Content-Type": "text/html"
+    };
+
+    response.writeHead(200, HTTP_OK_DESC, headers);
+    response.write(stdout);
+    response.end();
+}
+
+function startPlainText(response) {
     // "...[O]ur application...[used] to transport the content (which the
     // request handlers would like to display to the user) from the request
     // handlers to the HTTP server by returning it up THROUGH the layers of
@@ -94,6 +106,27 @@ function start(response) {
     exec("dir", (error, stdout, stderr) => {
         writePlainTextResponse(response, stdout);
     });
+}
+
+function start(response) {
+    console.log("Request handler 'start' was called.");
+
+    var body = `
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="utf-8" />
+                <meta http-equiv="Content-Type" content="text/html" />
+            </head>
+            <body>
+                <form action="/upload" method="post">
+                    <textarea name="text" rows="20" cols="60"></textarea>
+                    <input type="submit" value="Submit text" />
+                </form>
+            </body>
+        </html>`;
+
+    writeHtmlResponse(response, stdout);
 }
 
 function upload(response) {
