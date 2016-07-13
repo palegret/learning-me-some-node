@@ -2,6 +2,7 @@
 
 let exec = require("child_process").exec;
 let querystring = require("querystring");
+let fs = require("fs");
 
 const HTTP_OK_DESC = "Saul Goodman";
 
@@ -140,8 +141,25 @@ function upload(response, postData) {
     writePlainTextResponse(response, message);
 }
 
+function show(response, postData) {
+    console.log("Request handler 'show' was called.");
+
+    fs.readFile("test.jpg", "binary", (error, file) => {
+        if (error) {
+            response.writeHead(500, { "Content-Type": "text/plain" });
+            response.write(error + "\n");
+            response.end();
+        } else {
+            response.writeHead(200, { "Content-Type": "image/jpeg" });
+            response.write(file, "binary");
+            response.end();
+        }
+    });
+}
+
 exports.start = start;
 exports.upload = upload;
+exports.show = show;
 
 // More info:
 // http://blog.mixu.net/2011/02/01/understanding-the-node-js-event-loop/
