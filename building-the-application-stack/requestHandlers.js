@@ -121,11 +121,11 @@ function start(response, postData) {
                 <meta http-equiv="Content-Type" content="text/html" />
             </head>
             <body>
-                <form action="/upload" method="post">
+                <form action="/upload" enctype="multipart/form-data" method="post">
                     <div>
                         <textarea name="text" rows="20" cols="60"></textarea>
                     </div>
-                    <input type="submit" value="Submit text" />
+                    <input type="submit" value="Upload File" />
                 </form>
             </body>
         </html>`;
