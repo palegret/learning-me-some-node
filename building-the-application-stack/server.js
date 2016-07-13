@@ -13,42 +13,14 @@ function startListening(listener) {
     console.log(`Server has started on port ${PORT}.`);
 }
 
-function startOriginal(route, handle) {
-    let requestListener = (request, response) => {
-        let parsedUrl = url.parse(request.url);
-        let pathname = parsedUrl ? parsedUrl.pathname : "";
-        let isFavicon = (/favicon\.ico\b/i).test(pathname);
-
-        if (isFavicon)
-            return;
-
-        let content = "";
-
-        console.log(`Request for ${pathname} received.`);
-        route(pathname, response, handle);
-    };
-
-    startListening(requestListener);
-}
-
 function start(route, handle) {
     let requestListener = (request, response) => {
-        let postData = "";
         let parsedUrl = url.parse(request.url);
         let pathname = parsedUrl ? parsedUrl.pathname : "";
 
         console.log(`Request for ${pathname} received.`);
 
-        request.setEncoding("utf8");
-
-        request.addListener("data", (postDataChunk) => {
-            postData += postDataChunk;
-            console.log(`Received POST data chunk '${postDataChunk}'.`);
-        });
-
-        request.addListener("end", () => {
-            route(pathname, response, handle, postData);
-        });
+        route(handle, pathname, request, response);
     };
 
     startListening(requestListener);
